@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<style>
+    #app-2 .error{
+        color: red;
+    }
+    [v-cloak] {display: none}
+</style>
+<body>
+    <div id="app-1">{{message}}</div>
+    <div id="app-2">
+        <input type="text" v-model="message">
+        <div class="error" v-if="error.require">Required!</div>
+        <div class="error" v-if="error.tooLong">Over Long!</div>
+    </div>
+    <div id="app-101">
+        <div v-text="message"></div>
+        <div>{{message}}</div>
+    </div>
+    <div id="app-102">
+        <div v-text="message"></div>
+        <div v-html="message"></div>
+    </div>
+    <div id="app-103">
+        <input type="checkbox" @click="change" checked>
+        <span v-show="seen">Hello!</span>
+    </div>
+    <div id="app-104">
+        <input type="checkbox" @click="change" checked>
+        <span v-if="seen">Hello!</span>
+    </div>
+    <div id="app-105">
+        <input type="checkbox" @click="change" checked>
+        <span v-if="seen">Hello!</span>
+        <span v-else>Bye!</span>
+    </div>
+    <div id="app-106">
+        <input type="radio" name="app106-type" onClick="app106.type='A'" checked>
+        <input type="radio" name="app106-type" onClick="app106.type='B'">
+        <input type="radio" name="app106-type" onClick="app106.type='C'">
+        <span v-if="type=='A'">Goodmorning!</span>
+        <span v-else-if="type=='B'">Hello!</span>
+        <span v-else>Bye!</span>
+    </div>
+    <div id="app-107">
+        <ul>
+            <li v-for="color in colorList">{{ color }}</li>
+        </ul>
+    </div>
+    <div id="app-108">
+        <button v-on:click="hello">Hello</button>
+        <button @click="hello">Hello</button>
+    </div>
+    <div id="app-109">
+        <input type="button" v-bind:value="message">
+        <input type="button" :value="message">
+    </div>
+    <div id="app-120">
+        <input v-model="message">
+        <div>Message{{message}}</div>
+    </div>
+    <div id="app-121">
+        <div v-pre>Message: {{message}}</div>
+        <div>Message:{{message}}</div>
+    </div>
+    <div id="app-122">
+        <button onClick="location.reload()">再表示</button>
+        <div>Message:<span v-cloak>{{message}}</span></div>
+        <div>Message:<span>{{message}}</span></div>
+    </div>
+    <div id="app-123">
+        <input type="text" name="text1" v-model:value="message">
+        <div>Message:<span v-once>{{message}}</span></div>
+        <div>Message:<span>{{message}}</span></div>
+    </div>
+    <div id="app-140">
+        <my-element-140></my-element-140>
+    </div>
+    <div id="app-141">
+        <my-component-141></my-component-141>
+    </div>
+    <div id="app-142">
+        <div>{{message}}</div>
+    </div>
+    <div id="app-143">
+        <input type="button" @click="addBlue" value="Add">
+        <input type="button" @click="deleteBlue" value="Delete">
+        <ul>
+            <li v-for="(value, key) in colorList">{{key}} = {{value}}</li>
+        </ul>
+    </div>
+    <div id="app-144">
+        <div v-font16>Hello!</div>
+    </div>
+    <div id="app-145">
+        <div>{{message | toupper}}</div>
+    </div>
+    <div id="app-201">{{message}}</div>
+    <div id="app-202">
+        <my-element-202 value="Hello!"></my-element-202>
+    </div>
+    <div id="app-203">
+        <div id="el-203"></div>
+    </div>
+    <div id="app-204">
+        <div><input v-model="message"></div>
+        <div>Message:{{upperMessage}}</div>
+    </div>
+    <div id="app-205">
+        <button @click="toUpper">Upper</button>
+        <button @click="toLower">Lower</button>
+        <div>{{message}}</div>
+    </div>
+    <div id="app-206">
+        <form action="">
+            <input type="text" name="text1" :value="message">
+            <input type="button" @click="change" value="Change">
+        </form>
+        <div>変更前：{{oldmsg}}
+        </div>
+        <div>変更後:{{newmsg}}</div>
+    </div>
+    <div id="app-210" v-text="message"></div>
+    <div id="app-211">
+        <my-element-211></my-element-211>
+    </div>
+    <div id="app-212">
+        <my-heading-212 :level="1">Hello!</my-heading-212>
+    </div>
+    <div id="app-213">
+        <app213-heading :level="1">Hello!</app213-heading>
+    </div>
+    <div id="app-250">
+        <div v-font16>Hello!</div>
+    </div>
+    <div id="app-251">
+        <div>{{message | toupper}}</div>
+        <div>{{message | tolower}}</div>
+    </div>
+    <div id="app-252">
+        <my-comp1></my-comp1>
+        <my-comp2></my-comp2>
+        <my-comp3></my-comp3>
+    </div>
+    <div id="app-261">
+        <input type="button" @click="hello" value="Hello">
+    </div>
+    <div id="app-301">
+        <input type="text" @keyup.alt-h="help">
+    </div>
+
+    <script>
+        var app1 = new Vue({
+            el: '#app-1',
+            data: {message: 'Hello world!'}
+        })
+        var app2 = new Vue({
+            el: '#app-2',
+            watch: {
+                message: function(newVal, oldVal) {
+                    this.error.require = (newVal.length < 1) ? true : false;
+                    this.error.tooLong = (newVal.length > 5) ? true : false;
+                }
+            },
+            data: {
+                message: 'Hello',
+                error: {
+                    required: false,
+                    tooLong: false
+                }
+            }
+        })
+        var app101 = new Vue({
+            el: '#app-101',
+            data: {message: 'Hello!'}
+        })
+        var app102 = new Vue({
+            el: '#app-102',
+            data: {message: '<b>Hello!</b>'}
+        })
+        var app103 = new Vue({
+            el: '#app-103',
+            data: {seen: true},
+            methods: {
+                change: function(e){
+                    this.seen = e.target.checked
+                }
+            }
+        })
+        var app104 = new Vue({
+            el: '#app-104',
+            data: {seen: true},
+            methods: {
+                change: function(e){
+                    this.seen = e.target.checked
+                }
+            }
+        })
+        var app105 = new Vue({
+            el: '#app-105',
+            data: {seen: true},
+            methods: {
+                change: function(e){
+                    this.seen = e.target.checked
+                }
+            }
+        })
+        var app106 = new Vue({
+            el: '#app-106',
+            data: {type: 'A'}
+        })
+        var app107 = new Vue({
+            el: '#app-107',
+            data: {colorList: ['Red', 'Green', 'Blue']}
+        })
+        var app108 = new Vue({
+            el: '#app-108',
+            methods: {
+                hello: function(){
+                    alert("Hello!");
+                }
+            }
+        })
+        var app109 = new Vue({
+            el: '#app-109',
+            data: {message: 'Hello!'}
+        })
+        var app120 = new Vue({
+            el: '#app-120',
+            data: {message: 'Hello!'}
+        })
+        var app121 = new Vue({
+            el: '#app-121',
+            data: {message: 'Hello!'}
+        })
+        window.setTimeout(function(){
+            var app122 = new Vue({
+                el: '#app-122',
+                data: {message: 'Hello!'}
+            })
+        },1000);
+        var app123 = new Vue({
+            el: '#app-123',
+            data: {message: 'Hello'}
+        })
+        var app140 = new Vue({
+            el: '#app-140',
+        })
+        var MyComponent141 = Vue.extend({
+            template: '<strong>Hello!</strong>'
+        })
+        Vue.component('my-component-141', MyComponent141)
+        var app141 = new Vue({
+            el: '#app-141',
+        })
+        var app142 = new Vue({
+            el: '#app-142',
+            data: {
+                message: 'Hello!',
+                msg1: '',
+                msg2: ''
+            }
+        })
+        app142.message = 'Bye!'
+        console.log(app142.$el.textContent);
+        Vue.nextTick(function(){
+            console.log(app142.$el.textContent);
+        })
+        var app143 = new Vue({
+            el: '#app-143',
+            data: {
+                colorList: {
+                    red: '#f00',
+                    green: '#0f0'
+                }
+            },
+            methods: {
+                addBlue: function(){
+                    Vue.set(this.colorList, 'blue', '#00f')
+                },
+                deleteBlue: function(){
+                    Vue.delete(this.colorList, 'blue')
+                }
+            }
+        })
+        Vue.directive('font16',{
+            inserted: function(el){
+                el.style.fontize = '16pt'
+            }
+        })
+        var app144 = new Vue({
+            el: '#app-144'
+        })
+        Vue.filter('toupper', function(value){
+            return value.toUpperCase()
+        })
+        var app145 = new Vue({
+            el: '#app-145',
+            data: {message: 'Hello!'}
+        })
+        Vue.mixin({
+            created: function(){
+                console.log(this)
+            }
+        })
+        var res = Vue.compile('<div>{{message}}</div>');
+        new Vue({
+            data: {message: 'Hello!'},
+            render: res.render,
+            staticRenderFns: res.staticRenderFns
+        })
+        console.log(Vue.version)
+        var app201 = new Vue({
+            el: '#app-201',
+            data: {message: 'Hello!'}
+        })
+        Vue.component('my-element-202',{
+            props: ['value'],
+            template: '<div>{{value}}</div>'
+        })
+        var app202 = new Vue({
+            el: '#app-202'
+        })
+        var MyElement203 = Vue.extend({
+            props: ['message'],
+            template: '<div>{{message}}</div>'
+        })
+        var vm = new MyElement203({
+            propsData: {message: 'Hello!'}
+        }).$mount('#el-203');
+        var app203 = new Vue({
+            el: '#app-203'
+        })
+        var app204 = new Vue({
+            el: '#app-204',
+            data: {
+                message: 'Hello!'
+            },
+            computed: {
+                upperMessage: function(){
+                    return this.message.toUpperCase();
+                }
+            }
+        })
+        var app205 = new Vue({
+            el: '#app-205',
+            data: {
+                message: 'Hello'
+            },
+            methods: {
+                toUpper: function(){
+                    this.message = this.message.toUpperCase();
+                },
+                toLower: function(){
+                    this.message = this.message.toLowerCase();
+                }
+            }
+        })
+        var app206 = new Vue({
+            el: '#app-206',
+            data: {
+                message: 'new',
+                newmsg: 'new',
+                oldmsg: 'old'
+            },
+            watch: {
+                message: function(newVal, oldVal){
+                    this.newmsg = newVal;
+                    this.oldmsg = oldVal;
+                }
+            },
+            methods: {
+                change: function(e){
+                    this.message = e.target.form.text1.value;
+                }
+            }
+        })
+        var app210 = new Vue({
+            el: '#app-210',
+            data: {message: 'Hello!'}
+        })
+        Vue.component('my-element-211',{
+            template: '<span>Hello!</span>'
+        })
+        var app211 = new Vue({
+            el: '#app-211',
+        })
+        Vue.component('my-heading-212',{
+            render: function(createElement){
+                return createElement('h' + this.level, this.$slots.default)
+            },
+            props: ['level']
+        })
+        var app212 = new Vue({
+            el: '#app-212',
+        })
+        Vue.component('app213-heading',{
+            render: function(createElement){
+                throw new Error('err213')
+            },
+            renderError: function(ce, err){
+                return ce('pre', {style: {color: 'red'}}, err.stack)
+            },
+            props: ['level']
+        })
+        var app213 = new Vue({
+            el: '#app-213',
+        })
+        new Vue({
+            created: function(){
+                console.log(this)
+            }
+        })
+        var app250 = new Vue({
+            el: '#app-250',
+            directives: {
+                font16: {
+                    inserted: function(el){
+                        el.style.fontsize = '16pt'
+                    }
+                }
+            }
+        })
+        var app251 = new Vue({
+            el: '#app-251',
+            data: {message: 'Hello!'},
+            filters: {
+                toupper: function(value){
+                    return (value.toUpperCase())
+                },
+                tolower: function(value){
+                    return (value.toLowerCase())
+                }
+            }
+        })
+        var MyComp1 = {template: '<div style="color:red">Hello!</div>'}
+        var MyComp2 = {template: '<div style="color:green">Hello!</div>'}
+        var MyComp3 = {template: '<div style="color:blue">Hello!</div>'}
+        var app252 = new Vue({
+            el: '#app-252',
+            components: {
+                'my-comp1': MyComp1,
+                'my-comp2': MyComp2,
+                'my-comp3': MyComp3,
+            }
+        })
+        var myMixin = {
+            methods: {
+                hello: function(){
+                    alert('Hello!');
+                }
+            }
+        }
+        var app261 = new Vue({
+            el: '#app-261',
+            mixins: [myMixin]
+        })
+        Vue.config.keyCodes = {
+            h: 72,
+            "alt-h": [18, 72]
+        }
+        var app301 = new Vue({
+            el: '#app-301',
+            methods: {
+                help: function(){
+                    alert("Help...");
+                }
+            }
+        })
+    </script>
+</body>
+</html>

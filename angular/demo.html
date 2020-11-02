@@ -1,0 +1,134 @@
+<!doctype html>
+<html ng-app>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myController', function($scope) {
+    $scope.message = 'Hello world!';
+  });
+  </script>
+  <script>
+    var app = angular.module('myApp', []);
+    app.controller('myController', function() {
+      this.message = 'Hello world!';
+    });
+    </script>
+    <script>
+      var app = angular.module('myApp', []);
+      app.controller('myController', function() {
+          this.members = [
+              { name: 'Tanaka', age: 36 },
+              { name: 'Suzuki', age: 16 },
+              { name: 'Yamada', age: 26 }
+          ];
+      });
+      </script>
+      <script>
+        var app = angular.module('myApp', []);
+        app.controller('myController', function() {
+            this.members = [
+                { name: 'Tanaka', age: 36 },
+                { name: 'Suzuki', age: 16 },
+                { name: 'Yamada', age: 26 }
+            ];
+        });
+        </script>
+        <script>
+          var app = angular.module("myApp", []);
+          app.controller('myController', function() {
+            this.count = 0;
+            this.inc = function() { this.count++; }
+            this.dec = function() { this.count--; }
+          });
+          </script>
+          <script>
+            var app = angular.module("myApp", []);
+            app.controller("myController", function() {
+              this.members = [
+                { name:"Tanaka", age:16 },
+                { name:"Yamada", age:26 },
+                { name:"Suzuki", age:36 },
+              ];
+              this.onAdd = function() {
+                this.members.push({ name:this.name, age:this.age });
+                this.name = this.age = "";
+              };
+              this.onDel = function() {
+                for (var i = 0; i < this.members.length; i++) {
+                  if (this.members[i].checked) {
+                    this.members.splice(i--, 1);
+                  }
+                }
+              };
+            });
+            </script>
+</head>
+<body>
+ <div>
+  <p><input type="text" ng-model="yourName"></p>
+  <p>Hello {{yourName}}!</p>
+  <div><input type="text" ng-model="x"></div>
+   <div><input type="text" ng-model="y"></div>
+   <div>{{x}} vs {{y}} : {{( x > y ) ? x : y}} is big.</div>
+  </div>
+  カンマ区切り：{{12345678|number}}<br>
+  小数点以下：{{12.34|number:4}}<br>
+  通貨：{{12.34|currency}}<br>
+  通貨:{{1234|currency:'&yen;'}}<br>
+  日付：{{'2099-12-31T12:59:59'|date}}<br>
+  日付:{{'2099-12-31T12:59:59'|date:'yyyy/MM/dd'}}<br>
+  最初の三件のみ：{{[1,2,3,4]|limitTo:3}}<br>
+  小文字変換：{{"Yamada"|lowercase}}<br>
+  大文字変換：{{"Yamada"|uppercase}}<br>
+  JSON形式:{{{name:"Yamada", age:36}|json}}<br>
+  ソート：{{[1,3,5,2,4]|orderBy}}<br>
+  逆順ソート：{{[1,3,5,2,4]|orderBy:'':true}}<br>
+  <div ng-app="myApp">
+    <div ng-controller="myController">
+     {{message}}
+    </div>
+   </div>
+   <div ng-app="myApp">
+    <div ng-controller="myController as myCtrl">
+     {{myCtrl.message}}
+    </div>
+   </div>
+   <div ng-controller="myController as myCtrl">
+    <ul>
+      <li ng-repeat="member in myCtrl.members|orderBy:'age':true">{{member.name}} {{member.age}}</li>
+    </ul>
+    <div>{{myCtrl.members.length}} members</div>
+   </div>
+   <div ng-controller="myController as myCtrl">
+    <input type="text" ng-model="searchText">
+    <ul>
+    <li ng-repeat="member in myCtrl.members|filter:searchText">{{member.name}} {{member.age}}</li>
+    </ul>
+   </div>
+   <div ng-controller="myController as myCtrl">
+    {{myCtrl.count}}
+    <button ng-click="myCtrl.inc()">+1</button>
+    <button ng-click="myCtrl.dec()">-1</button>
+  </div>
+  <form name="myForm" novalidate>
+    <div><input type="text" name="text1" ng-model="sampleText" ng-required="true" ng-minlength=3 ng-maxlength=8></div>
+    <div ng-show="myForm.text1.$error.required">Required!</div>
+    <div ng-show="myForm.text1.$error.minlength">Too short!</div>
+    <div ng-show="myForm.text1.$error.maxlength">Too long!</div>
+   </form>
+   <div>
+    <input type="text" ng-model="myCtrl.name">(<input type="text" ng-model="myCtrl.age">)
+    <button ng-click="myCtrl.onAdd()">Add</button>
+   </div>
+   <div ng-repeat="member in myCtrl.members">
+    <input type="checkbox" ng-model="member.checked">{{member.name}}({{member.age}})
+   </div>
+   <div><button ng-click="myCtrl.onDel()">Del</button></div>
+   <hr><pre>{{myCtrl|json}}</pre><hr>
+   {{'\{\{name\}\}'}}
+  {{name}<!-- -->}
+  <span class="ng-non-bindable">{{name}}</span>
+</body>
+</html>
